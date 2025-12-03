@@ -6,7 +6,12 @@ Use this when you have both Claude Code and Cursor in your environment.
 
 ```
 dot-claude/                    → rename to .claude
-├── CLAUDE.md                  # Coding guidelines (both tools read this)
+├── CLAUDE.md                  # Lean root file with core principles
+├── agent_docs/                # Detailed reference docs (read on demand)
+│   ├── coding-patterns.md     # TypeScript patterns with examples
+│   ├── anti-patterns.md       # AI-specific mistakes to avoid
+│   ├── error-handling.md      # Error handling conventions
+│   └── testing-patterns.md    # How to write testable code
 ├── commands/
 │   ├── fix-types.md           # /fix-types - Fix TS errors without any
 │   ├── review-diff.md         # /review-diff - Review for AI patterns
@@ -45,6 +50,7 @@ This lets Cursor read CLAUDE.md and use the same `/fix-types`, `/review-diff`, `
 | File | Claude Code | Cursor |
 |------|-------------|--------|
 | `.claude/CLAUDE.md` | ✅ | ✅ (with import setting) |
+| `.claude/agent_docs/*.md` | ✅ (on demand) | ❌ |
 | `.claude/commands/*.md` | ✅ | ✅ (with import setting) |
 | `.claude/skills/*/SKILL.md` | ✅ | ❌ |
 | `.cursor/rules/*.mdc` | ❌ | ✅ |
