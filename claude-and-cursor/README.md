@@ -11,11 +11,16 @@ dot-claude/                    → rename to .claude
 │   ├── coding-patterns.md     # TypeScript patterns with examples
 │   ├── anti-patterns.md       # AI-specific mistakes to avoid
 │   ├── error-handling.md      # Error handling conventions
-│   └── testing-patterns.md    # How to write testable code
+│   ├── testing-patterns.md    # How to write testable code
+│   ├── bug-investigation.md   # 6-step debugging protocol
+│   └── code-review-checklist.md # Prioritized review checklist
 ├── commands/
-│   ├── fix-types.md           # /fix-types - Fix TS errors without any
-│   ├── review-diff.md         # /review-diff - Review for AI patterns
-│   └── simplify.md            # /simplify - Reduce complexity
+│   ├── fix-types.md           # /cust-fix-types - Fix TS errors without any
+│   ├── review-diff.md         # /cust-review-diff - Review for AI patterns
+│   ├── simplify.md            # /cust-simplify - Reduce complexity
+│   ├── analyze-bug.md         # /cust-analyze-bug - Root cause analysis
+│   ├── plan-feature.md        # /cust-plan-feature - Break into stages
+│   └── take-notes.md          # /cust-take-notes - Capture discoveries
 └── skills/
     ├── code-review/SKILL.md   # Auto-applied during code review
     ├── serverless-aws/SKILL.md
@@ -28,6 +33,10 @@ dot-claude/                    → rename to .claude
 
 ```bash
 cp -r dot-claude /your/project/.claude
+
+# Rename commands with cust- prefix for easy discovery
+cd /your/project/.claude/commands
+for f in *.md; do mv "$f" "cust-$f"; done
 ```
 
 ### 2. Enable Cursor imports (one-time)
@@ -49,11 +58,14 @@ This lets Cursor read CLAUDE.md (which references agent_docs/) and use the same 
 
 ## Commands
 
-All three commands work in both Claude Code and Cursor:
+All commands work in both Claude Code and Cursor (after renaming with `cust-` prefix):
 
-- `/fix-types` - Fix TypeScript errors using type guards, not `any`
-- `/review-diff` - Review branch diff, remove AI anti-patterns
-- `/simplify` - Simplify code while keeping behavior identical
+- `/cust-fix-types` - Fix TypeScript errors using type guards, not `any`
+- `/cust-review-diff` - Review branch diff, remove AI anti-patterns
+- `/cust-simplify` - Simplify code while keeping behavior identical
+- `/cust-analyze-bug` - Systematic root cause analysis for stubborn bugs
+- `/cust-plan-feature` - Break complex features into implementable stages
+- `/cust-take-notes` - Capture technical discoveries to `docs/`
 
 ## Skills (Claude Code only)
 

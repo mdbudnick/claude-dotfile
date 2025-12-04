@@ -1,5 +1,13 @@
 # Paste this content into: Cursor Settings → Rules → User Rules
 
+## Workflow Patterns
+
+**New Feature**: Plan → Implement → Test (if repo has tests) → Review
+**Bug Fix**: Reproduce → Hypothesize → Fix → Add regression test (if repo has tests)
+**Escalation**: After 2 failed fix attempts, stop and systematically analyze
+
+**Philosophy**: Make it work → Make it right → Make it fast
+
 ## Core Principles
 - Write immediately understandable code
 - Simplify if it feels complex
