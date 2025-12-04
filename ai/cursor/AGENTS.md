@@ -57,18 +57,17 @@ src/
 - Validate all external inputs at system boundaries
 - Use type guards for runtime validation
 
-## Before You Start
+## Reference
 
-Read the relevant reference docs in `agent_docs/`:
+See `.cursor/rules/` for context-specific rules:
 
-| File | When to Read |
+| Rule | When Applied |
 |------|--------------|
-| `coding-patterns.md` | Writing new TypeScript code |
-| `anti-patterns.md` | Before code review or PR |
-| `error-handling.md` | Implementing error handling |
-| `testing-patterns.md` | Writing or refactoring tests |
-| `bug-investigation.md` | Debugging issues that resist quick fixes |
-| `code-review-checklist.md` | Reviewing code or preparing a PR |
+| `coding-guidelines.mdc` | Every conversation |
+| `typescript-patterns.mdc` | When editing *.ts/*.tsx files |
+| `serverless-aws.mdc` | When editing handlers/ or lib/ files |
+| `bug-investigation.mdc` | When debugging issues |
+| `code-review-checklist.mdc` | When reviewing code |
 
 ## Project-Specific Notes
 
