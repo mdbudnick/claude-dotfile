@@ -1,8 +1,146 @@
 # Writing Style Examples
 
-Annotated examples demonstrating key techniques from actual blog posts.
+Annotated examples demonstrating key techniques. Split into two modes: **Educational/Technical** (the default for most posts) and **Personal Essays** (for opinion pieces and life topics).
 
-## Opening Hooks
+---
+
+## Educational/Technical Style
+
+The teaching-first voice. Hook with a measurable claim, build mental models, use worked examples.
+
+### Measurable Hooks with "How?"
+
+**Number + question:**
+> Prompt caching can cut your LLM costs by 10x. But how does it actually work? What's being cached, and why does it only help sometimes?
+
+*States the payoff, then immediately asks what the reader is thinking.*
+
+**Latency hook:**
+> This change dropped our p95 from 2.3s to 140ms. The mechanism isn't obvious—it's not about faster hardware or better algorithms. It's about what we stopped computing.
+
+*Concrete numbers, then invites curiosity about the "why."*
+
+### Learning Objectives Block
+
+**Near the top of a technical post:**
+> By the end of this post, you'll understand:
+> - How LLMs process text as tokens, not characters
+> - Why attention is O(n²) and what that means for long contexts
+> - When prompt caching helps (and when it doesn't)
+
+*Specific outcomes. The reader knows what they're signing up for.*
+
+### First Principles Building
+
+**Define before you use:**
+> Before we talk about embeddings, we need to understand tokens. A token isn't a word—it's a chunk of text that the model treats as a single unit. "unhappiness" might be three tokens: "un", "happiness", and potentially a space.
+>
+> Now that we understand tokens, we can talk about what the model does with them.
+
+*Builds the concept, then explicitly transitions.*
+
+**Layered explanation:**
+> An embedding is just a list of numbers—a position in high-dimensional space. Similar words end up near each other. "king" and "queen" are close. "king" and "banana" are far apart.
+>
+> That's the intuition. Now let's see how it's computed.
+
+*Gives the mental model first, then goes deeper.*
+
+### Permission-Giving
+
+**When it gets hard:**
+> This is the most abstract part of the whole system. The math looks intimidating, but you don't need to fully understand matrix multiplication to get the key insight. Here's what matters: attention lets the model look at all the other tokens when deciding what a token means.
+
+*Acknowledges difficulty, gives permission to skim, extracts the core insight.*
+
+**Encouraging the reader:**
+> If you've followed along this far, you already understand 80% of how transformers work. The remaining 20% is optimization tricks.
+
+*Validates progress, reduces intimidation.*
+
+### Worked Micro-Examples
+
+**Threading one example through:**
+> Let's use a tiny example: "The cat sat."
+>
+> First, tokenization: `["The", " cat", " sat", "."]` → `[464, 3797, 3332, 13]`
+>
+> Next, embeddings. Each token ID maps to a vector. Token 464 ("The") becomes `[0.12, -0.34, 0.56, ...]`—a point in 768-dimensional space.
+>
+> Now attention. When processing "sat", the model looks back at "The" and "cat" to understand context...
+
+*Same tokens, same sentence, carried through each concept.*
+
+### Pseudocode Before Real Code
+
+**Lower the barrier:**
+> Here's the attention mechanism in pseudocode:
+> ```
+> for each token in sequence:
+>     look at all previous tokens
+>     compute relevance score for each
+>     weighted average = new representation
+> ```
+>
+> In PyTorch, this becomes:
+> ```python
+> scores = query @ key.T / sqrt(d_k)
+> weights = softmax(scores)
+> output = weights @ value
+> ```
+
+*Plain language first, real code second.*
+
+### "In Summary" Compressions
+
+**End-of-post compression:**
+> **In summary:** Prompt caching works by storing the computed key-value pairs from your prompt. When you send a new request with the same prefix, the model skips recomputing those pairs and starts from the cached state. This saves compute (and money) proportional to how much of your prompt stays constant. It doesn't help if your prompts vary significantly, and it requires the provider to support it.
+
+*One paragraph that captures the whole mechanism. If you only read this, you'd still get it.*
+
+### Orienting Transitions
+
+**Tell the reader where you are:**
+> That's tokenization. Now let's see what happens to these token IDs.
+
+> We've covered the forward pass. But training is where it gets interesting.
+
+> So far we've assumed unlimited memory. In practice, there's a constraint.
+
+*Short, explicit, moves the reader forward.*
+
+### Honest Uncertainty
+
+**When you don't know:**
+> We don't really know what's encoded in each dimension of the embedding. Researchers have found that some dimensions correlate with concepts like "royalty" or "gender," but most are uninterpretable. What we do know is that the geometry works—similar meanings cluster together.
+
+*States the unknown plainly, then says what's still useful.*
+
+**Deferring to better sources:**
+> I won't go deep on backpropagation here—Andrej Karpathy's "micrograd" video does it better than I could. What matters for our purposes is...
+
+*Links out instead of doing a worse job.*
+
+### Trade-off Tables (Technical)
+
+**Comparing approaches:**
+> | Approach | Latency | Cost | Complexity |
+> |----------|---------|------|------------|
+> | Recompute every request | High | High | Low |
+> | Cache full responses | Low | Low | High (invalidation) |
+> | Cache KV pairs (prompt caching) | Medium | Medium | Medium |
+>
+> We're using KV caching because our prompts share a long system message but vary in user input.
+
+*Shows the landscape, then picks a side with reasoning.*
+
+---
+
+## Personal Essay Style
+
+For opinion pieces, life topics, and posts where personal stakes drive the argument. Personal experience establishes credibility. Trade-off thinking still applies. Wry closers are allowed here.
+
+### Opening Hooks
 
 **Personal context + problem statement:**
 > I've been curious about RAG (Retrieval-Augmented Generation) for a while. Reading about a technology and actually shipping it are very different. I wanted to feel the real friction—parsing, chunking, embeddings, latency, cost, quality—and see the upside. I like to think in trade-offs.
@@ -24,7 +162,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Grounds the piece in lived experience before making the larger point.*
 
-## Bold Claims with Backing
+### Bold Claims with Backing
 
 **Provocative statement → immediate explanation:**
 > Most successful people do not set goals, they establish systems.
@@ -41,7 +179,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Uses bold formatting for the claim, then stacks evidence.*
 
-## Trade-off Analysis
+### Trade-off Analysis
 
 **Explicit options with trade-offs:**
 > Options for vector storage:
@@ -61,7 +199,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Shows the trade-off, then explains why the cost is worth it.*
 
-## Personal Stakes & Credibility
+### Personal Stakes & Credibility
 
 **Declare what you do/have:**
 > I have term life insurance. If I die prematurely, within the policy term my family gets a payout. I pay a monthly premium, and if I don't pass away within the term, there's no payout - a deal which I will take every single time.
@@ -73,7 +211,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Establishes authority through practice, not credentials.*
 
-## Quote Integration
+### Quote Integration
 
 **Block quote with commentary:**
 > This fight club quote resonates with me:
@@ -90,7 +228,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Quick attribution, relevant quote, no over-explanation.*
 
-## Technical Structure
+### Technical Structure
 
 **Table of contents for navigation:**
 ```markdown
@@ -108,7 +246,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Numbered, bold key insight, brief explanation.*
 
-## Closings
+### Closings
 
 **Elevated/aspirational:**
 > In these early years, while they may not remember the specifics, they will carry the feeling, the unspoken message: *I am worthy, I am capable, I am loved.* And that is the voice I hope will guide them through life.
@@ -127,7 +265,7 @@ Annotated examples demonstrating key techniques from actual blog posts.
 
 *Restates the thesis, emphasizes freedom/agency.*
 
-## Formatting Patterns
+### Formatting Patterns
 
 - **Bold** for key phrases and takeaways
 - *Italics* for internal dialogue or emphasis
