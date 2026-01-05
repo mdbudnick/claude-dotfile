@@ -2,21 +2,46 @@
 
 Create a pull request with a concise markdown description of changes since the base branch.
 
+**Usage**: `/create-pr [base-branch] [--publish]`
+- `base-branch` (optional): Target branch for the PR (defaults to develop or main)
+- `--publish` (optional): Create a regular PR instead of a draft
+
 ## Pre-computation
 
 ```bash
-BASE_BRANCH=$(git rev-parse --verify develop 2>/dev/null && echo "develop" || echo "main")
+# Parse arguments
+ARGS=($ARGS)
+CUSTOM_BASE=""
+DRAFT_FLAG="--draft"
+
+for arg in "${ARGS[@]}"; do
+  if [[ "$arg" == "--publish" ]]; then
+    DRAFT_FLAG=""
+  elif [[ -z "$CUSTOM_BASE" && "$arg" != --* ]]; then
+    CUSTOM_BASE="$arg"
+  fi
+done
+
+# Determine base branch
+if [[ -n "$CUSTOM_BASE" ]]; then
+  BASE_BRANCH="$CUSTOM_BASE"
+else
+  BASE_BRANCH=$(git rev-parse --verify develop 2>/dev/null && echo "develop" || echo "main")
+fi
+
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 GIT_STATUS=$(git status --short)
 GIT_DIFF=$(git diff ${BASE_BRANCH}...HEAD --stat)
 COMMIT_LOG=$(git log ${BASE_BRANCH}..HEAD --oneline)
 IS_PUSHED=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null && echo "yes" || echo "no")
 SHORTCUT_ID=$(echo ${CURRENT_BRANCH} | grep -oE 'sc-[0-9]{5,6}' | head -1 | sed 's/sc-//')
+DRAFT_STATUS=$(if [[ -n "$DRAFT_FLAG" ]]; then echo "Draft PR"; else echo "Published PR"; fi)
 ```
 
 **Base branch**: {{BASE_BRANCH}}
 **Current branch**: {{CURRENT_BRANCH}}
 **Pushed to remote**: {{IS_PUSHED}}
+**PR type**: {{DRAFT_STATUS}}
 **Shortcut story ID**: {{SHORTCUT_ID}}
 
 **File changes**:
@@ -43,9 +68,9 @@ SHORTCUT_ID=$(echo ${CURRENT_BRANCH} | grep -oE 'sc-[0-9]{5,6}' | head -1 | sed 
     - **Technical Changes** (Describe any new technical changes that need explaining, can be omitted for conventional changes)
     - **Test Plan** (describe any tests added, omit if no tests added)
 3. Push to remote with `-u` flag if not already pushed
-4. Create PR using:
+4. Create PR using (include {{DRAFT_FLAG}} in the command):
    ```bash
-   gh pr create --draft --base {{BASE_BRANCH}} --title "Brief title" --body "$(cat <<'EOF'
+   gh pr create {{DRAFT_FLAG}} --base {{BASE_BRANCH}} --title "Brief title" --body "$(cat <<'EOF'
    # TLDR
    <!-- If SHORTCUT_ID exists, include: https://app.shortcut.com/proxima-ai/story/{SHORTCUT_ID}/ -->
 
