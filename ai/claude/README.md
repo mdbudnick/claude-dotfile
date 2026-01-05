@@ -28,8 +28,9 @@ ai/claude/
 │   ├── testing-patterns.md
 │   └── writing/
 │       └── writing-style-examples.md
-├── commands/              # Slash commands (synced with custom- prefix)
+├── commands/              # Slash commands (synced with custom- prefix except create-pr)
 │   ├── analyze-bug.md     → /custom-analyze-bug
+│   ├── create-pr.md       → /create-pr
 │   ├── fix-types.md       → /custom-fix-types
 │   ├── plan-feature.md    → /custom-plan-feature
 │   ├── review-diff.md     → /custom-review-diff
@@ -87,6 +88,7 @@ These plugins complement the custom commands:
 | Command | Purpose |
 |---------|---------|
 | `/custom-analyze-bug` | Systematic root cause analysis |
+| `/create-pr` | Create PR with concise markdown description |
 | `/custom-fix-types` | Fix TypeScript errors without `any` |
 | `/custom-plan-feature` | Break features into stages |
 | `/custom-review-diff` | Quick diff review for anti-patterns |

@@ -1,9 +1,9 @@
 # Claude Sync Makefile - Copy to target repos
-# Usage: make -f Makefile.claude sync
+# Usage: make -f Makefile.repo sync
 #
 # Commands are prefixed with custom- to distinguish from plugin commands
 
-DOTFILES := $(HOME)/Git/dotfiles/ai/claude
+DOTFILES := $(HOME)/code/claude-dotfile/ai/claude
 USER_DIR := $(HOME)/.claude
 RSYNC := rsync -av --delete
 
@@ -29,7 +29,11 @@ sync:
 	@$(RSYNC) $(DOTFILES)/.agent_docs/ .claude/.agent_docs/
 	@for f in $(DOTFILES)/commands/*.md; do \
 		name=$$(basename "$$f"); \
-		cp "$$f" "$(USER_DIR)/commands/custom-$$name"; \
+		if [ "$$name" = "create-pr.md" ]; then \
+			cp "$$f" "$(USER_DIR)/commands/$$name"; \
+		else \
+			cp "$$f" "$(USER_DIR)/commands/custom-$$name"; \
+		fi; \
 	done
 	@$(RSYNC) $(DOTFILES)/skills/ $(USER_DIR)/skills/
 	@$(RSYNC) $(DOTFILES)/hooks/ $(USER_DIR)/hooks/
@@ -42,7 +46,11 @@ sync-force:
 	@$(RSYNC) $(DOTFILES)/.agent_docs/ .claude/.agent_docs/
 	@for f in $(DOTFILES)/commands/*.md; do \
 		name=$$(basename "$$f"); \
-		cp "$$f" "$(USER_DIR)/commands/custom-$$name"; \
+		if [ "$$name" = "create-pr.md" ]; then \
+			cp "$$f" "$(USER_DIR)/commands/$$name"; \
+		else \
+			cp "$$f" "$(USER_DIR)/commands/custom-$$name"; \
+		fi; \
 	done
 	@$(RSYNC) $(DOTFILES)/skills/ $(USER_DIR)/skills/
 	@$(RSYNC) $(DOTFILES)/hooks/ $(USER_DIR)/hooks/
@@ -51,8 +59,15 @@ sync-force:
 dry-run:
 	@echo "=== CLAUDE.md ===" && diff -q $(DOTFILES)/CLAUDE.md ./CLAUDE.md 2>/dev/null || echo "Would update"
 	@echo "=== .agent_docs ===" && $(RSYNC) --dry-run $(DOTFILES)/.agent_docs/ .claude/.agent_docs/ 2>/dev/null || true
-	@echo "=== commands (will be prefixed with custom-) ==="
-	@for f in $(DOTFILES)/commands/*.md; do echo "  custom-$$(basename $$f)"; done
+	@echo "=== commands (prefixed with custom- except create-pr) ==="
+	@for f in $(DOTFILES)/commands/*.md; do \
+		name=$$(basename $$f); \
+		if [ "$$name" = "create-pr.md" ]; then \
+			echo "  $$name"; \
+		else \
+			echo "  custom-$$name"; \
+		fi; \
+	done
 	@echo "=== skills ===" && $(RSYNC) --dry-run $(DOTFILES)/skills/ $(USER_DIR)/skills/ 2>/dev/null || true
 	@echo "=== hooks ===" && $(RSYNC) --dry-run $(DOTFILES)/hooks/ $(USER_DIR)/hooks/ 2>/dev/null || true
 
