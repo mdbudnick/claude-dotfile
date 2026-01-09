@@ -84,6 +84,7 @@ Plugins must be installed from within Claude Code (not the shell).
 Open Claude Code and paste the following commands:
 
 # Add plugin marketplaces
+/plugin marketplace update claude-plugins-official
 /plugin marketplace add anthropics/claude-code
 /plugin marketplace add ast-grep/claude-skill
 /plugin marketplace add sawyerhood/dev-browser
@@ -94,6 +95,7 @@ Open Claude Code and paste the following commands:
 /plugin install commit-commands@claude-code-plugins
 /plugin install feature-dev@claude-code-plugins
 /plugin install frontend-design@claude-code-plugins
+/plugin install code-simplifier
 
 # Install third-party plugins
 /plugin install ast-grep
