@@ -124,6 +124,85 @@ console.log('Processing complete');
 console.error(`Failed to process order ${orderId}: ${error.message}`);
 ```
 
+### Numbered Steps/Items
+
+AI loves numbering things: "Step 1", "Step 2", comments with "1.", "2.", "3.". This is unmaintainable—inserting or reordering requires renumbering everything.
+
+```typescript
+// ❌ Bad: Numbered comments
+// 1. Validate input
+validateInput(data);
+// 2. Transform data
+const transformed = transform(data);
+// 3. Save to database
+await save(transformed);
+
+// ✅ Good: No numbers, or use descriptive names
+// Validate input
+validateInput(data);
+// Transform data
+const transformed = transform(data);
+// Persist
+await save(transformed);
+
+// ❌ Bad: Numbered variables
+const step1Result = validateInput(data);
+const step2Result = transform(step1Result);
+const step3Result = await save(step2Result);
+
+// ✅ Good: Descriptive names
+const validatedData = validateInput(data);
+const transformedData = transform(validatedData);
+const savedRecord = await save(transformedData);
+```
+
+If order matters, the code sequence already shows it. If you need to document a workflow, use a README or JSDoc, not inline numbered comments.
+
+### Unnecessary Intermediate Variables
+
+Don't assign to a variable just to immediately return it. Return directly.
+
+```typescript
+// ❌ Bad: Pointless intermediate variable
+private async generatePurposeCategories(): Promise<PurposeCategorizationOutput> {
+    const purposeCategoriesRaw = await this.geminiClient.getJsonResponse({
+        systemPrompt: hydratePrompt(PURPOSE_CATEGORIZATION_SYSTEM_PROMPT),
+        outputSchema: purposeCategorizationSchema
+    });
+
+    return purposeCategoriesRaw;
+}
+
+// ✅ Good: Return directly
+private async generatePurposeCategories(): Promise<PurposeCategorizationOutput> {
+    return this.geminiClient.getJsonResponse({
+        systemPrompt: hydratePrompt(PURPOSE_CATEGORIZATION_SYSTEM_PROMPT),
+        outputSchema: purposeCategorizationSchema
+    });
+}
+```
+
+Exception: Keep the variable if you need to debug, transform it, or the name adds clarity to a complex expression.
+
+### Unnecessary Exports
+
+Adding `export` to things that aren't imported anywhere hides dead code from the compiler. TypeScript can warn about unused locals, but not unused exports.
+
+```typescript
+// ❌ Bad: Exported but never imported anywhere
+export function helperFunction() { ... }
+export const SOME_CONSTANT = 'value';
+export interface InternalConfig { ... }
+
+// ✅ Good: Only export what's actually used elsewhere
+function helperFunction() { ... }  // Internal to this file
+const SOME_CONSTANT = 'value';     // Internal to this file
+
+export function publicAPI() { ... }  // Actually imported by other modules
+```
+
+Before adding `export`, verify the symbol is imported somewhere. Before finishing a review, check that any new exports are actually used.
+
 ## Review Process
 
 1. **Get the diff**: Compare against main branch
