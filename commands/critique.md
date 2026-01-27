@@ -1,13 +1,13 @@
-# Review Branch Changes
+# Critique Branch
 
 Review code changes on the current branch compared to a base branch.
 
-**Usage**: `/review-branch [base-branch]`
+**Usage**: `/critique [base-branch]`
 - `base-branch` (optional): Target branch to compare against (defaults to origin/develop if it exists, otherwise origin/main)
 
 **Examples**:
-- `/review-branch` — Review current branch against origin/develop (or origin/main)
-- `/review-branch main` — Review current branch against origin/main
+- `/critique` — Review current branch against origin/develop (or origin/main)
+- `/critique main` — Review current branch against origin/main
 
 ## Pre-computation
 
@@ -43,7 +43,7 @@ GIT_DIFF=$(git diff ${BASE_BRANCH}...HEAD 2>/dev/null)
 FILES_CHANGED=$(git diff ${BASE_BRANCH}...HEAD --name-only 2>/dev/null)
 ```
 
-**Reviewing branch**: {{CURRENT_BRANCH}}
+**Critiquing branch**: {{CURRENT_BRANCH}}
 **Base branch**: {{BASE_BRANCH}} ({{COMMIT_COUNT}} commits ahead)
 
 **Commits to review**:
@@ -183,7 +183,7 @@ Skip praise. Focus only on actionable feedback.
 
 ## After Review
 
-Once you've listed all PR comments, ask the user if they'd like you to fix the issues. If yes, enter plan mode to design the solutions and implement the fixes.
+Once you've listed all comments, ask the user if they'd like you to fix the issues. If yes, enter plan mode to design the solutions and implement the fixes.
 
 ## Diff
 
