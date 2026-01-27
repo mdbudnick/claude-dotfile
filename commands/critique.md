@@ -1,31 +1,49 @@
 # Review Branch Changes
 
-Review code changes on the current branch compared to origin/develop or origin/main (whichever is closer).
+Review code changes on the current branch compared to a base branch.
+
+**Usage**: `/review-branch [base-branch]`
+- `base-branch` (optional): Target branch to compare against (defaults to origin/develop if it exists, otherwise origin/main)
+
+**Examples**:
+- `/review-branch` — Review current branch against origin/develop (or origin/main)
+- `/review-branch main` — Review current branch against origin/main
 
 ## Pre-computation
 
 ```bash
+# Parse arguments
+ARGS=($ARGS)
+CUSTOM_BASE="${ARGS[0]:-}"
+
 # Fetch latest to ensure accurate comparison
 git fetch origin develop main 2>/dev/null || git fetch origin main 2>/dev/null || git fetch origin develop 2>/dev/null
 
-# Count commits to each base branch (fewer = closer)
-DEVELOP_DISTANCE=$(git rev-list --count HEAD ^origin/develop 2>/dev/null || echo 999999)
-MAIN_DISTANCE=$(git rev-list --count HEAD ^origin/main 2>/dev/null || echo 999999)
-
-if [[ "$DEVELOP_DISTANCE" -le "$MAIN_DISTANCE" ]]; then
-  BASE_BRANCH="origin/develop"
+# Determine base branch
+if [[ -n "$CUSTOM_BASE" ]]; then
+  # Try origin/base first, fall back to local
+  if git rev-parse "origin/$CUSTOM_BASE" 2>/dev/null >/dev/null; then
+    BASE_BRANCH="origin/$CUSTOM_BASE"
+  else
+    BASE_BRANCH="$CUSTOM_BASE"
+  fi
 else
-  BASE_BRANCH="origin/main"
+  # Default: origin/develop if it exists, otherwise origin/main
+  if git rev-parse origin/develop 2>/dev/null >/dev/null; then
+    BASE_BRANCH="origin/develop"
+  else
+    BASE_BRANCH="origin/main"
+  fi
 fi
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-COMMIT_COUNT=$(git rev-list --count HEAD ^${BASE_BRANCH})
-COMMIT_LOG=$(git log ${BASE_BRANCH}..HEAD --oneline)
-GIT_DIFF=$(git diff ${BASE_BRANCH}...HEAD)
-FILES_CHANGED=$(git diff ${BASE_BRANCH}...HEAD --name-only)
+COMMIT_COUNT=$(git rev-list --count HEAD ^${BASE_BRANCH} 2>/dev/null || echo "?")
+COMMIT_LOG=$(git log ${BASE_BRANCH}..HEAD --oneline 2>/dev/null)
+GIT_DIFF=$(git diff ${BASE_BRANCH}...HEAD 2>/dev/null)
+FILES_CHANGED=$(git diff ${BASE_BRANCH}...HEAD --name-only 2>/dev/null)
 ```
 
-**Current branch**: {{CURRENT_BRANCH}}
+**Reviewing branch**: {{CURRENT_BRANCH}}
 **Base branch**: {{BASE_BRANCH}} ({{COMMIT_COUNT}} commits ahead)
 
 **Commits to review**:
@@ -89,7 +107,7 @@ After review, consider:
 
 ## Your Task
 
-Perform a comprehensive code review of the changes below.
+**Run in plan mode.** Perform a comprehensive code review of the changes below and output PR-style comments.
 
 ### Review Checklist
 
@@ -135,19 +153,37 @@ Perform a comprehensive code review of the changes below.
 - Breaking changes to public APIs
 - Missing backwards compatibility
 
-### Output Format
+---
 
-Organize findings by severity:
-- 🔴 **Critical**: Must fix before merge (bugs, security issues)
-- 🟡 **Important**: Should fix (anti-patterns, maintainability)
-- 🔵 **Suggestion**: Nice to have (style, minor improvements)
+## Output Format
 
-For each finding, provide:
-1. File and line reference
-2. Description of the issue
-3. Specific fix or code example when applicable
+Output each finding as a PR comment with file path and line number. Include ALL findings, even nits.
+
+**Comment types by severity**:
+- 🔴 **blocker**: Must fix before merge (bugs, security issues)
+- 🟡 **suggestion**: Should fix (anti-patterns, maintainability)
+- 🔵 **nit**: Style, naming, minor improvements (optional to address)
+
+**Format each comment as**:
+```
+📍 **file/path.ts:42** [blocker|suggestion|nit]
+
+> ```ts
+> // quoted code snippet from the diff
+> ```
+
+**Issue**: Description of the problem.
+
+**Suggestion**: How to fix it (with code example if helpful).
+```
 
 Skip praise. Focus only on actionable feedback.
+
+---
+
+## After Review
+
+Once you've listed all PR comments, ask the user if they'd like you to fix the issues. If yes, enter plan mode to design the solutions and implement the fixes.
 
 ## Diff
 

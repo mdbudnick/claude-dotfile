@@ -26,7 +26,7 @@ done
 if [[ -n "$CUSTOM_BASE" ]]; then
   BASE_BRANCH="$CUSTOM_BASE"
 else
-  BASE_BRANCH=$(git rev-parse --verify develop 2>/dev/null && echo "develop" || echo "main")
+  BASE_BRANCH=$(git rev-parse --verify origin/develop 2>/dev/null && echo "develop" || echo "main")
 fi
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -70,7 +70,7 @@ DRAFT_STATUS=$(if [[ -n "$DRAFT_FLAG" ]]; then echo "Draft PR"; else echo "Publi
 3. Push to remote with `-u` flag if not already pushed
 4. Create PR using (include {{DRAFT_FLAG}} in the command):
    ```bash
-   gh pr create {{DRAFT_FLAG}} --base {{BASE_BRANCH}} --title "Brief title" --body "$(cat <<'EOF'
+   gh pr create {{DRAFT_FLAG}} --base $(git rev-parse --verify origin/develop 2>/dev/null && echo "develop" || echo "main") --title "Brief title" --body "$(cat <<'EOF'
    # TLDR
    <!-- If SHORTCUT_ID exists, include: https://app.shortcut.com/proxima-ai/story/{SHORTCUT_ID}/ -->
 
