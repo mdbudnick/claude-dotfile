@@ -27,15 +27,18 @@ for item in "${items[@]}"; do
   fi
 
   if [ -L "$target" ]; then
-    echo "Updating symlink: $item"
+    current_target=$(readlink "$target")
+    echo "Updating $item symlink. (original symlink: $current_target)"
     rm "$target"
-  elif [ -e "$target" ]; then
-    echo "Backing up existing $item to $item.bak"
-    mv "$target" "$target.bak"
+  elif [ -e "$target" ] || [ -d "$target" ]; then
+    timestamp=$(date +%Y%m%d_%H%M%S)
+    backup="$target.bak.$timestamp"
+    echo "Backing up existing $item to $item.bak.$timestamp"
+    mv "$target" "$backup"
   fi
 
   ln -s "$source" "$target"
-  echo "Linked: $item"
+  echo "Linked: $item to $target"
 done
 
 echo ""
