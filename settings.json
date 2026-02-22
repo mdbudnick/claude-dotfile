@@ -53,6 +53,16 @@
       "Read",
       "WebFetch",
       "WebSearch"
+    ],
+    "deny": [
+      "Read(.envrc)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)",
+      "Read(./build)",
+      "Read(~/.aws/**)",
+      "Bash(curl * | *)"
     ]
   },
   "includeCoAuthoredBy": false,
