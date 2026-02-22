@@ -3,16 +3,6 @@
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "60000"
   },
   "permissions": {
-    "deny": [
-      "Read(.envrc)",
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(./config/credentials.json)",
-      "Read(./build)",
-      "Read(~/.aws/**)",
-      "Bash(curl * | *)"
-    ],
     "allow": [
       "Bash(npm run *)",
       "Bash(npm test*)",
