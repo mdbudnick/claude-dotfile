@@ -219,3 +219,10 @@ After reviewing, provide a brief summary:
 Removed 3 redundant null checks in order-processor.ts (upstream validation handles these). 
 Deleted 8 obvious comments and converted 2 unnecessary try/catch blocks to let errors propagate.
 ```
+### Incorrect Inline Examples
+
+Comments that show example values or transformation chains must match what the code actually produces. AI often writes plausible-looking examples that are subtly wrong.
+
+// ✅ Good: input over 1 minute, chain ends with the real output string
+// e.g. 65895ms → 5895 → 5.895 → "05.895" → "1m05.895s"
+return `${Math.floor(elapsed / 60000)}m${((elapsed % 60000) / 1000).toFixed(3).padStart(6, '0')}s`;
