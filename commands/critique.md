@@ -3,11 +3,11 @@
 Review code changes on the current branch compared to a base branch.
 
 **Usage**: `/critique [base-branch]`
-- `base-branch` (optional): Target branch to compare against (defaults to origin/develop if it exists, otherwise origin/main)
+- `base-branch` (optional): Target branch to compare against (defaults to origin/develop if it exists)
 
 **Examples**:
-- `/critique` — Review current branch against origin/develop (or origin/main)
-- `/critique main` — Review current branch against origin/main
+- `/critique` — Review current branch against origin/develop
+- `/critique develop` — Review current branch against origin/develop
 
 ## Pre-computation
 
@@ -16,23 +16,21 @@ Review code changes on the current branch compared to a base branch.
 ARGS=($ARGS)
 CUSTOM_BASE="${ARGS[0]:-}"
 
-# Fetch latest to ensure accurate comparison
-git fetch origin develop main 2>/dev/null || git fetch origin main 2>/dev/null || git fetch origin develop 2>/dev/null
+# Base branch argument
+If CUSTOM_BASE exists: git fetch it. If it matches, then use that branch as the base branch first.
+Fetch this branch if it exists and announce you are using that branch with a stdout or similar.
+If the branch does not exist: git fetch origin develop 2>/dev/null || git fetch origin 2>/dev/null || git fetch origin develop 2>/dev/null
 
 # Determine base branch
-if [[ -n "$CUSTOM_BASE" ]]; then
+
+if [[ -z "$CUSTOM_BASE" ]]; then
+  BASE_BRANCH="origin/develop"
+else
   # Try origin/base first, fall back to local
   if git rev-parse "origin/$CUSTOM_BASE" 2>/dev/null >/dev/null; then
     BASE_BRANCH="origin/$CUSTOM_BASE"
   else
     BASE_BRANCH="$CUSTOM_BASE"
-  fi
-else
-  # Default: origin/develop if it exists, otherwise origin/main
-  if git rev-parse origin/develop 2>/dev/null >/dev/null; then
-    BASE_BRANCH="origin/develop"
-  else
-    BASE_BRANCH="origin/main"
   fi
 fi
 
