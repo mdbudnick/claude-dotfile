@@ -2,6 +2,7 @@
   "env": {
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "60000"
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(npm run *)",
@@ -11,7 +12,6 @@
       "Bash(pnpm *)",
       "Bash(yarn *)",
       "Bash(npx *)",
-      "Bash(gh pr *)",
       "Bash(gh issue *)",
       "Bash(gh repo view*)",
       "Bash(gh api *)",
@@ -62,10 +62,12 @@
       "Read(./config/credentials.json)",
       "Read(./build)",
       "Read(~/.aws/**)",
-      "Bash(curl * | *)"
+      "Bash(curl * | *)",
+      "Read(**/*credential*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)"
     ]
   },
-  "includeCoAuthoredBy": false,
   "enabledPlugins": {
     "hookify@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
@@ -79,5 +81,6 @@
     "deployment-tools@team-tools": true,
     "experimental-features@personal": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "model": "opus"
 }
