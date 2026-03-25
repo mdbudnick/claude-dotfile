@@ -42,4 +42,55 @@ for item in "${items[@]}"; do
 done
 
 echo ""
-echo "Done! Symlinks created in $CLAUDE_DIR"
+echo "Symlinks created in $CLAUDE_DIR"
+
+# --- Install plugins from settings.json ---
+SETTINGS="$SCRIPT_DIR/settings.json"
+
+if ! command -v claude &>/dev/null; then
+  echo "Claude CLI not found — skipping plugin installation."
+  exit 0
+fi
+
+if ! command -v jq &>/dev/null; then
+  echo "jq not found — skipping plugin installation. Install jq to enable."
+  exit 0
+fi
+
+if [ ! -f "$SETTINGS" ]; then
+  echo "No settings.json found — skipping plugin installation."
+  exit 0
+fi
+
+echo ""
+echo "Installing plugins from settings.json..."
+
+# Add extra marketplaces first
+for name in $(jq -r '.extraKnownMarketplaces // {} | keys[]' "$SETTINGS"); do
+  source_url=$(jq -r ".extraKnownMarketplaces[\"$name\"].source.url" "$SETTINGS")
+  existing=$(claude plugin marketplace list 2>/dev/null)
+  if echo "$existing" | grep -q "$name"; then
+    echo "Marketplace already added: $name"
+  else
+    echo "Adding marketplace: $name ($source_url)"
+    claude plugin marketplace add "$source_url" || echo "  Warning: failed to add marketplace $name"
+  fi
+done
+
+# Get list of already-installed plugins
+installed=$(claude plugin list 2>/dev/null || true)
+
+# Install each enabled plugin
+for plugin in $(jq -r '.enabledPlugins // {} | keys[]' "$SETTINGS"); do
+  # Extract short name (before @) for checking installed list
+  short_name="${plugin%%@*}"
+  if echo "$installed" | grep -q "$short_name"; then
+    echo "Already installed: $plugin"
+  else
+    echo "Installing: $plugin"
+    claude plugin install "$plugin" || echo "  Warning: failed to install $plugin"
+  fi
+done
+
+echo ""
+echo "Done!"
