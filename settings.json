@@ -79,8 +79,16 @@
     "code-simplifier@claude-plugins-official": true,
     "code-formatter@team-tools": true,
     "deployment-tools@team-tools": true,
-    "experimental-features@personal": true
+    "experimental-features@personal": true,
+    "minimax-skills@minimax-skills": true
   },
-  "alwaysThinkingEnabled": true,
-  "model": "opus"
+  "extraKnownMarketplaces": {
+    "minimax-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/MiniMax-AI/skills.git"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true
 }
